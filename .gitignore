@@ -1,0 +1,54 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Node modules
+node_modules/
+npm_modules/
+
+# Environment files
+.env
+.env.test
+.env.production
+.env.local
+
+# Dependency directories
+/.pnp
+.pnp.js
+
+# Build artifacts
+dist/
+build/
+out/
+
+# Editor & OS specific files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw*
+
+# TypeScript
+*.tsbuildinfo
+
+# Optional npm cache
+.npm
+
+# Jest
+/coverage
+/junit.xml
+
+# PM2 process file
+pm2.pid
+
+# Docker
+*.dockerignore
+docker-compose.override.yml
