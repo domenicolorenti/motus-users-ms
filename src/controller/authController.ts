@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import User from '../models/user';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import config from '../config/config';
-import mongoose from 'mongoose';
 
 const sendResponse = (res: Response, status: number, message: string, extraData = {}): void => {
     res.status(status).json({ message, ...extraData });
+    console.log("message:" + message + "\nstatus: " + status);
 };
 
 // Register a new user
@@ -66,6 +66,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         sendResponse(res, 200, 'Login Successful', { token });
     } catch (error) {
         sendResponse(res, 500, 'Internal Server Error!');
+        console.error(error);
     }
 };
 

@@ -7,7 +7,7 @@ dotenv.config();
 if (!process.env.JWT_SECRET) {
     console.error("⚠️ Missing JWT_SECRET in environment variables!");
     process.env.JWT_SECRET = crypto.randomBytes(32).toString('hex');
-    console.log("✅ Generated JWT_SECRET:", process.env.JWT_SECRET);
+    console.log("✅ Generated JWT_SECRET!");
 }
 
 const config = {

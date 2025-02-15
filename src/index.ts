@@ -1,10 +1,10 @@
-import express from "express";
+import express, { Request, Response } from 'express';
 import cors from "cors";
 import { config, connectDB } from "./config";
 import bodyParser from "body-parser";
 import { authRoutes } from "./routes";
-import bcrypt from "bcryptjs/types";
 import { User } from "./models";
+import bcrypt from "bcrypt";
 
 
 const app = express();
@@ -24,7 +24,7 @@ const addAdmin = async () => {
       const hashedPassword = await bcrypt.hash("admin", 10);
 
       // Create a new user
-      const newUser = new User({ username: "admin", password: hashedPassword });
+      const newUser = new User({ username: "admin", password: hashedPassword, email: "admin@admin.com" });
       await newUser.save();
       console.log("Admin user created successfully!");
     } else {
@@ -40,13 +40,17 @@ const addAdmin = async () => {
 
 app.use("/auth", authRoutes);
 
+// Routes
+app.get('/', (req: Request, res: Response) => {
+  res.send('Hello, Express with TypeScript!');
+});
+
 
 // Start Server
 const startServer = async () => {
   try {
     // DB connection
     await connectDB(config.db.url);
-    console.log("DB connected!");
 
     // add user
     await addAdmin();
@@ -60,3 +64,5 @@ const startServer = async () => {
     console.error("Error starting the server:", error);
   }
 }
+
+startServer()

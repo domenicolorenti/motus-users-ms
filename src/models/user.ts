@@ -1,5 +1,5 @@
 import mongoose, { Document, Schema, Model } from "mongoose";
-import { AccessLevel } from "./utils";
+import { AccessLevel } from "./enum";
 
 interface IProjectAccess {
     projectId: mongoose.Types.ObjectId;

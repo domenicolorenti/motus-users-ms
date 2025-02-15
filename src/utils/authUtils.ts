@@ -1,7 +1,7 @@
 import { ObjectId } from "mongoose";
 import { config } from "../config";
 import jwt from "jsonwebtoken";
-import { AccessLevel } from "../models/utils";
+import { AccessLevel } from "../models/enum";
 
 
 export const getAuthorizedUser = (token: string) => {
