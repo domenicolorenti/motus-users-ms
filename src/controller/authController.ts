@@ -3,10 +3,12 @@ import User from '../models/user';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import config from '../config/config';
+import { ObjectId, Types } from 'mongoose';
+import { AccessLevel } from '../models/enum';
+import { checkPermission } from '../utils/authUtils';
 
 const sendResponse = (res: Response, status: number, message: string, extraData = {}): void => {
     res.status(status).json({ message, ...extraData });
-    console.log("message:" + message + "\nstatus: " + status);
 };
 
 // Register a new user
@@ -76,18 +78,76 @@ export const getProfile = (req: Request, res: Response): void => {
 };
 
 // Validate JWT Token (use header instead of body)
-export const validate = (req: Request, res: Response): void => {
-    const token = req.headers.authorization?.split(' ')[1];
-
+export const auth = (req: Request, res: Response): void => {
+    const token = validate(req.headers.authorization?.split(' ')[1]);
     if (!token) {
-        sendResponse(res, 400, 'Token is required.', { valid: false });
+        sendResponse(res, 401, 'Invalid or expired token.', { valid: false });
         return;
+    }
+    sendResponse(res, 200, 'Authenticated', { valid: true });
+};
+
+interface AddProjectRequest extends Request {
+    body: {
+        projectId: Types.ObjectId;
+        access: number;
+        userId: Types.ObjectId;
+    }
+}
+
+export const addProjectAccess = async (req: AddProjectRequest, res: Response): Promise<void> => {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            sendResponse(res, 401, 'Missing or malformed authorization header.');
+            return;
+        }
+
+        const token = validate(authHeader.split(' ')[1]);
+        if (!token) {
+            sendResponse(res, 401, 'Invalid or expired token.');
+            return;
+        }
+
+        const { projectId, userId, access} = req.body;
+
+        if (!projectId) {
+            sendResponse(res, 400, 'Project ID is required.');
+            return;
+        }
+
+        if (!checkPermission(token, projectId, AccessLevel.FULL)) {
+            sendResponse(res, 403, 'User does not have the required permission.');
+            return;
+        }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            sendResponse(res, 404, 'User does not exist.');
+            return;
+        }
+
+        user.access.push({ projectId: projectId, accessLevel: 2 });
+        await user.save();
+
+        sendResponse(res, 200, 'Project access granted successfully.');
+    } catch (error) {
+        console.error('Error in addProjectAccess:', error);
+        sendResponse(res, 500, 'Internal Server Error.');
+    }
+};
+
+
+const validate = (token: string | undefined): string | null => {
+    if (!token) {
+        return null;
     }
 
     try {
         jwt.verify(token, config.security.jwt_secret);
-        sendResponse(res, 200, 'Token is valid.', { valid: true });
+        return token;
     } catch (error) {
-        sendResponse(res, 401, 'Invalid or expired token.', { valid: false });
+        console.error(error);
+        return null;
     }
-};
+}

@@ -1,7 +1,8 @@
-import { ObjectId } from "mongoose";
+import { Types } from "mongoose";
 import { config } from "../config";
 import jwt from "jsonwebtoken";
 import { AccessLevel } from "../models/enum";
+import { IProjectAccess } from "../models/user";
 
 
 export const getAuthorizedUser = (token: string) => {
@@ -22,6 +23,25 @@ export const getAuthorizedUser = (token: string) => {
     }
 }
 
-export const checkPermission = (project: ObjectId, access: AccessLevel) => {
+export const checkPermission = (token: string, projectId: Types.ObjectId, requiredAccessLevel: AccessLevel): boolean => {
+    try {
+        const decoded = jwt.verify(token, config.security.jwt_secret) as { username: string, access: IProjectAccess[] };
 
-}
+        if(decoded.username === "admin") {
+            return true;
+        }
+
+        if (!decoded || !decoded.access || !Array.isArray(decoded.access)) {
+            return false;
+        }
+
+        const projectAccess = decoded.access.find(
+            (entry) => entry.projectId.equals(projectId)
+        );
+
+        return projectAccess ? projectAccess.accessLevel.valueOf() >= requiredAccessLevel : false;
+    } catch (error) {
+        console.error('Error verifying token:', error);
+        return false;
+    }
+};

@@ -3,7 +3,7 @@ import { AccessLevel } from "./enum";
 
 interface IProjectAccess {
     projectId: mongoose.Types.ObjectId;
-    accessLevel: AccessLevel;
+    accessLevel: Number;
 }
 
 interface IUser extends Document {
@@ -16,7 +16,7 @@ interface IUser extends Document {
 
 const ProjectAccessSchema = new Schema<IProjectAccess>({
     projectId: { type: mongoose.Schema.Types.ObjectId, ref: "Project", required: true },
-    accessLevel: { type: Number, enum: Object.values(AccessLevel), required: true },
+    accessLevel: { type: Number, enum: [0, 1, 2, 3], required: true },
 });
 
 const UserSchema: Schema<IUser> = new mongoose.Schema({

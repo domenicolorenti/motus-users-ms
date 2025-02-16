@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 
 
 // Add User admin if not exists
-const addAdmin = async () => {
+const init = async () => {
   try {
     const user = await User.findOne({ username: "admin" });
     if (!user) {
@@ -53,7 +53,7 @@ const startServer = async () => {
     await connectDB(config.db.url);
 
     // add user
-    await addAdmin();
+    await init();
 
     // launch server
     app.listen(config.server.port, () => 
