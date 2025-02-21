@@ -127,7 +127,15 @@ export const addProjectAccess = async (req: AddProjectRequest, res: Response): P
             return;
         }
 
-        user.access.push({ projectId: projectId, accessLevel: 2 });
+        const existingAccess = user.access.find((entry) => entry.projectId === projectId);
+        
+        if (existingAccess) {
+            // Update the access level if the user already has access
+            existingAccess.accessLevel = access;
+        } else {
+            // Add new access entry if not already present
+            user.access.push({ projectId: projectId, accessLevel: access });
+        }
         await user.save();
 
         sendResponse(res, 200, 'Project access granted successfully.');
