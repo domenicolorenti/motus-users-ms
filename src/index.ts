@@ -8,7 +8,6 @@ import bcrypt from "bcrypt";
 
 
 const app = express();
-const PORT = process.env.PORT || 8080;
 
 // Middleware
 app.use(cors());
@@ -56,7 +55,7 @@ const startServer = async () => {
     await init();
 
     // launch server
-    app.listen(config.server.port, () => 
+    app.listen(config.server.port, '0.0.0.0', () => 
       console.log(`Server is running at http://localhost:${config.server.port}`)
     )
   }
