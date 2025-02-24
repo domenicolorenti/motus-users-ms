@@ -35,6 +35,6 @@ jobs:
           script: |
             cd /home/${{ secrets.GCE_USER }}/motus-users-ms
             git pull origin main
-            yarn install
-            yarn build
+            npm install
+            npm build
             pm2 restart all
