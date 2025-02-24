@@ -13,14 +13,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
-      - name: Install dependencies
-        run: npm install
-
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v1
         with:
@@ -33,13 +25,16 @@ jobs:
           username: ${{ secrets.GCE_USER }}
           key: ${{ secrets.GCE_SSH_KEY }}
           script: |
-            export NVM_DIR="$HOME/.nvm"
-            export PATH="$HOME/.nvm/versions/node/$(node -v)/bin:$PATH"
             export PATH=$(npm bin -g):$PATH
             export PATH=$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH
-
+            
             cd /home/${{ secrets.GCE_USER }}/motus-users-ms
-            git pull origin main
+
+            if [ ! -d ".git" ]; then
+              git clone <your-repo-url> .
+            else
+              git pull origin main
+            fi
 
             yarn install
             yarn build
