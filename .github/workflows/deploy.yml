@@ -25,6 +25,14 @@ jobs:
           username: ${{ secrets.GCE_USER }}
           key: ${{ secrets.GCE_SSH_KEY }}
           script: |
+            if [ -f "$HOME/.bashrc" ]; then
+              source $HOME/.bashrc
+            fi
+            if [ -f "$HOME/.profile" ]; then
+              source $HOME/.profile
+            fi
+
+            export PATH=$HOME/.nvm/versions/node/$(node -v)/bin:$PATH
             export PATH=$(npm bin -g):$PATH
             export PATH=$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH
             
