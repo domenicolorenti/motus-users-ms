@@ -33,8 +33,14 @@ jobs:
           username: ${{ secrets.GCE_USER }}
           key: ${{ secrets.GCE_SSH_KEY }}
           script: |
-            cd /home/${{ secrets.GCE_USER }}/motus-users-ms
+            export NVM_DIR="$HOME/.nvm"
+            export PATH="$HOME/.nvm/versions/node/$(node -v)/bin:$PATH"
+            export PATH=$(npm bin -g):$PATH
+            export PATH=$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH
+
+            cd /home/${{ secrets.GCE_USER }}/motus-user-ms
             git pull origin main
-            npm install
-            npm build
+
+            yarn install
+            yarn build
             pm2 restart all
