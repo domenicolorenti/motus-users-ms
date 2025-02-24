@@ -38,7 +38,7 @@ jobs:
             export PATH=$(npm bin -g):$PATH
             export PATH=$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH
 
-            cd /home/${{ secrets.GCE_USER }}/motus-user-ms
+            cd /home/${{ secrets.GCE_USER }}/motus-users-ms
             git pull origin main
 
             yarn install
