@@ -41,7 +41,7 @@ app.use("/auth", authRoutes);
 
 // Routes
 app.get('/', (req: Request, res: Response) => {
-  res.send('Hello, Express with TypeScript!');
+  res.send('Hello from user-ms!');
 });
 
 
